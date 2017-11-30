@@ -1,0 +1,31 @@
+(module {{key}} (layer F.Cu) (tedit 5A2018AF)
+  (attr smd)
+  (fp_text reference REF** (at 0 {{sy/-4 * 0.1}}) (layer F.Fab)
+    (effects (font (size {{sy/5 * 0.1}} {{sy/5 * 0.1}}) (thickness {{sy/5 * 0.015}})))
+  )
+  (fp_text value VAL** (at 0 {{sy/4 * 0.1}}) (layer F.Fab)
+    (effects (font (size {{sy/5 * 0.1}} {{sy/5 * 0.1}}) (thickness {{sy/5 * 0.015}})))
+  )
+
+  (fp_text user %R (at 0 {{sy/-4 * 0.1}}) (layer "F.SilkS")
+    (effects (font (size 0.7 0.7) (thickness 0.1)))
+  )
+  (fp_text user %V (at 0 {{sy/4 * 0.1}}) (layer "F.SilkS")
+    (effects (font (size 0.7 0.7) (thickness 0.1)))
+  )
+
+  {# Outline #}
+  (fp_line (start {{sx/-20}} {{sy/-20}}) (end {{sx/ 20}} {{sy/-20}}) (layer F.Fab) (width 0.05))
+  (fp_line (start {{sx/ 20}} {{sy/-20}}) (end {{sx/ 20}} {{sy/ 20}}) (layer F.Fab) (width 0.05))
+  (fp_line (start {{sx/ 20}} {{sy/ 20}}) (end {{sx/-20}} {{sy/ 20}}) (layer F.Fab) (width 0.05))
+  (fp_line (start {{sx/-20}} {{sy/ 20}}) (end {{sx/-20}} {{sy/-20}}) (layer F.Fab) (width 0.05))
+
+  {# Courtyard #}
+  (fp_line (start {{gx/-2}} {{gy/-2}}) (end {{gx/2}} {{gy/-2}}) (layer F.CrtYd) (width 0.05))
+  (fp_line (start {{gx/2}} {{gy/-2}}) (end {{gx/2}} {{gy/2}}) (layer F.CrtYd) (width 0.05))
+  (fp_line (start {{gx/2}} {{gy/2}}) (end {{gx/-2}} {{gy/2}}) (layer F.CrtYd) (width 0.05))
+  (fp_line (start {{gx/-2}} {{gy/2}}) (end {{gx/-2}} {{gy/-2}}) (layer F.CrtYd) (width 0.05))
+
+  (pad 1 smd rect (at {{pcc/-2}} 0) (size {{px}} {{py}}) (layers F.Cu F.Paste F.Mask))
+  (pad 2 smd rect (at {{pcc/2}} 0) (size {{px}} {{py}}) (layers F.Cu F.Paste F.Mask))
+)
