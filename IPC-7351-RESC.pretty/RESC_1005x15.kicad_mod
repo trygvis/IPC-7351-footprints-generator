@@ -1,4 +1,4 @@
-(module RESC1005X37 (layer F.Cu) (tedit 5A2018AF)
+(module RESC_1005x15 (layer F.Cu) (tedit 5A2018AF)
   (attr smd)
   (fp_text reference REF** (at 0 -0.125) (layer F.Fab)
     (effects (font (size 0.1 0.1) (thickness 0.015)))

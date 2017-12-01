@@ -1,4 +1,4 @@
-(module RESC3216X40 (layer F.Cu) (tedit 5A2018AF)
+(module CAPC_3216x40 (layer F.Cu) (tedit 5A2018AF)
   (attr smd)
   (fp_text reference REF** (at 0 -0.4) (layer F.Fab)
     (effects (font (size 0.32 0.32) (thickness 0.048)))
