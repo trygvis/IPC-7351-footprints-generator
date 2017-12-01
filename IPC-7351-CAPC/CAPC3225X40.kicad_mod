@@ -1,4 +1,4 @@
-(module RESC3225X40 (layer F.Cu) (tedit 5A2018AF)
+(module CAPC3225X40 (layer F.Cu) (tedit 5A2018AF)
   (attr smd)
   (fp_text reference REF** (at 0 -0.625) (layer F.Fab)
     (effects (font (size 0.5 0.5) (thickness 0.075)))
@@ -14,13 +14,13 @@
     (effects (font (size 0.7 0.7) (thickness 0.1)))
   )
 
-  
+
   (fp_line (start -1.6 -1.25) (end 1.6 -1.25) (layer F.Fab) (width 0.05))
   (fp_line (start 1.6 -1.25) (end 1.6 1.25) (layer F.Fab) (width 0.05))
   (fp_line (start 1.6 1.25) (end -1.6 1.25) (layer F.Fab) (width 0.05))
   (fp_line (start -1.6 1.25) (end -1.6 -1.25) (layer F.Fab) (width 0.05))
 
-  
+
   (fp_line (start -2.5 -1.5) (end 2.5 -1.5) (layer F.CrtYd) (width 0.05))
   (fp_line (start 2.5 -1.5) (end 2.5 1.5) (layer F.CrtYd) (width 0.05))
   (fp_line (start 2.5 1.5) (end -2.5 1.5) (layer F.CrtYd) (width 0.05))

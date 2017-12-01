@@ -1,35 +1,123 @@
 #!/usr/bin/env python
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-import os.path
+import os, os.path
+import re
+import ipc_sm_782
 
 basedir=os.path.dirname(__file__)
 
 env = Environment(
-    loader=FileSystemLoader(os.path.join(basedir, 'templates'))
+    loader=FileSystemLoader(os.path.join(basedir, 'templates')),
+    lstrip_blocks=True,
 )
+env.globals["rnd2"] = lambda x: round(x, 2)
 
 chip = env.get_template('CHIP.j2')
 
-resc_parameters = [
-    # size x, size y, pad x, pad y, pad center-center, grid x, grid y, terminal x, heights
-    (10,  5, 0.90, 0.70, 1.30,  6, 2, (0.10, 0.30), [15, 35, 37, 40]),
-    (16,  8, 1.10, 1.00, 1.70,  6, 4, (0.15, 0.40), [40]),
-    (20, 12, 1.30, 1.50, 1.90,  8, 4, (0.15, 0.65), [40]),
-    (32, 16, 1.60, 1.80, 2.80, 10, 4, (0.25, 0.75), [40]),
-    (32, 25, 1.60, 2.70, 2.80, 10, 6, (0.25, 0.75), [40]),
-    (50, 25, 1.80, 2.70, 4.40, 14, 6, (0.35, 0.85), [40]),
-    (63, 32, 1.80, 3.20, 5.60, 16, 8, (0.35, 0.85), [40]),
-]
+resc_heights = {
+    "1005": [15, 35, 37, 40],
+    "1608": [40],
+    "2012": [40],
+    "3216": [40],
+    "3225": [40],
+    "5025": [40],
+    "6332": [40],
+}
 
-for (sx, sy, px, py, pcc, gx, gy, tx, heights) in resc_parameters:
-    tx = (tx[0] + tx[1]) / 2
-    print("RESC{:02}{:02}".format(sx, sy))
-    gx = gx*0.5
-    gy = gy*0.5
-    for h in heights:
-        key = "RESC{:02}{:02}X{:02}".format(sx, sy, h)
-        print("  " + key)
-        kicad_mod = chip.render({"key": key, "sx": sx, "sy": sy, "px": px, "py": py, "pcc": pcc, "gx": gx, "gy": gy, "h": h})
-        with open("{}.kicad_mod".format(key), "w") as f:
-            f.write(kicad_mod)
+capc_heights = {
+    "1005": [15, 35, 37, 40],
+    "1608": [40],
+    "2012": [40],
+    "3216": [40],
+    "3225": [40],
+    "5025": [40],
+    "6332": [40],
+}
+
+def auto_str(cls):
+    def __str__(self):
+        return '%s(%s)' % (
+            type(self).__name__,
+            ', '.join('%s=%s' % item for item in vars(self).items())
+        )
+    cls.__str__ = __str__
+    return cls
+
+
+class Value(object):
+    def __init__(self, typ, mn, mx):
+        self.typ = typ if typ else (mn + mx) / 2
+        self.mn = mn
+        self.mx = mx
+
+    def __str__(self):
+        return "(typ={:0.2f}, min={:0.2f}, max={:0.2f})".format(self.typ, self.mn, self.mx)
+
+
+grid_re = re.compile("([0-9]+)x([0-9]+)")
+
+def parse_courtyard(grid):
+    (grid_y, grid_x) = grid_re.match(grid).groups()
+    return (float(grid_x) * 0.5 / 2, float(grid_y) * 0.5 / 2)
+
+
+@auto_str
+class ChipDimensions(object):
+    def __init__(self, **kw):
+        for k, v in kw.items():
+            setattr(self, k, v)
+
+    @staticmethod
+    def from_ipc(data):
+        print("data={}".format(data))
+        size_mm = data["size_mm"]
+#        print("x={}".format(grid_re.match(data["grid"]).groups()))
+        return ChipLandPattern(
+            key = size_mm,
+            size_x = Value(float(size_mm[0:2]) / 10, data["l_max"], data["l_min"]),
+            size_y = Value(float(size_mm[2:4]) / 10, data["w_max"], data["w_min"]),
+            terminal_size = Value(None, data["t_min"], data["t_max"]),
+            height_max = data["h_max"])
+
+@auto_str
+class ChipLandPattern(object):
+    def __init__(self, **kw):
+        for k, v in kw.items():
+            setattr(self, k, v)
+
+    @staticmethod
+    def from_ipc(data):
+#        print("data={}".format(data))
+        size_mm = data["size_mm"]
+        (courtyard_x, courtyard_y) = parse_courtyard(data["grid"])
+        r = lambda x: round(x)
+        return ChipLandPattern(
+            key = size_mm,
+            size_x = float(size_mm[0:2]) / 10,
+            size_y = float(size_mm[2:4]) / 10,
+            pad_pos_x = float(data["c"]) / 2,
+            pad_size_x = float(data["y"]),
+            pad_size_y = float(data["x"]),
+            courtyard_x = courtyard_x, courtyard_y = courtyard_y)
+
+#resc_dims = [ChipDimensions.from_ipc(p) for p in ipc_sm_782.data["resc"]["dimensions"]]
+resc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["resc"]["land_patterns"]]
+#capc_dims = [ChipDimensions.from_ipc(p) for p in ipc_sm_782.data["capc"]["dimensions"]]
+
+capc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_patterns"]]
+
+for kind, lps in {"RESC": resc_lp, "CAPC": capc_lp}.items():
+    basedir = "IPC-7351-{}".format(kind)
+    if not os.path.isdir(basedir):
+        os.mkdir(basedir)
+    for lp in lps:
+        print("{}{}".format(kind, lp.key))
+        print("lp={}".format(lp))
+        print("lp={}".format(lp.size_x / 8))
+        for h in resc_heights.get(lp.key, []):
+            key = "{}{}X{:02}".format(kind, lp.key, h)
+            print("  " + key)
+            kicad_mod = chip.render({"lp": lp, "key": key, "h": h})
+            with open(os.path.join(basedir, "{}.kicad_mod".format(key)), "w") as f:
+                f.write(kicad_mod)

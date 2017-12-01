@@ -14,13 +14,13 @@
     (effects (font (size 0.7 0.7) (thickness 0.1)))
   )
 
-  
+
   (fp_line (start -2.5 -1.25) (end 2.5 -1.25) (layer F.Fab) (width 0.05))
   (fp_line (start 2.5 -1.25) (end 2.5 1.25) (layer F.Fab) (width 0.05))
   (fp_line (start 2.5 1.25) (end -2.5 1.25) (layer F.Fab) (width 0.05))
   (fp_line (start -2.5 1.25) (end -2.5 -1.25) (layer F.Fab) (width 0.05))
 
-  
+
   (fp_line (start -3.5 -1.5) (end 3.5 -1.5) (layer F.CrtYd) (width 0.05))
   (fp_line (start 3.5 -1.5) (end 3.5 1.5) (layer F.CrtYd) (width 0.05))
   (fp_line (start 3.5 1.5) (end -3.5 1.5) (layer F.CrtYd) (width 0.05))
