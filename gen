@@ -16,23 +16,30 @@ env.globals["rnd2"] = lambda x: round(x, 2)
 chip = env.get_template('CHIP.j2')
 
 resc_heights = {
-    "1005": [15, 35, 37, 40],
-    "1608": [40],
-    "2012": [40],
-    "3216": [40],
-    "3225": [40],
-    "5025": [40],
-    "6332": [40],
+    "1005": [0.15, 0.35, 0.37, 0.40],
+    "1608": [0.40],
+    "2012": [0.40],
+    "3216": [0.40],
+    "3225": [0.40],
+    "5025": [0.40],
+    "6332": [0.40],
 }
 
 capc_heights = {
-    "1005": [15, 35, 37, 40],
-    "1608": [40],
-    "2012": [40, 135],
-    "3216": [40],
-    "3225": [40],
-    "5025": [40],
-    "6332": [40],
+    "1005": [0.15, 0.35, 0.37, 0.40],
+    "1608": [0.40],
+    "2012": [0.40, 1.35],
+    "3216": [0.40],
+    "3225": [0.40],
+    "5025": [0.40],
+    "6332": [0.40],
+}
+
+ledsc_heights = {
+# https://www.digikey.com/products/en/optoelectronics/led-indication-discrete/105?k=&pkeyword=&pv16=4&FV=ffe00069%2C1140003&mnonly=0&ColumnSort=0&page=1&quantity=0&ptm=0&fid=0&pageSize=100
+    "1005": [0.25, 0.35, 0.40, 0.45, 0.50, 0.52, 0.55, 0.60, 0.70, 0.71],
+    "1608": [0.20, 0.25, 0.28, 0.30, 0.35, 0.39, 0.40, 0.42, 0.45, 0.46, 0.50, 0.52, 0.55, 0.60, 0.65, 0.70, 0.71, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15],
+    "2012": [0.40, 0.45, 0.50, 0.70, 0.75, 0.79, 0.80, 0.84, 0.85, 0.90, 1.00, 1.10, 1.20, 1.25, 1.30, 2.10],
 }
 
 def auto_str(cls):
@@ -106,8 +113,14 @@ resc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["resc"]["land_pa
 #capc_dims = [ChipDimensions.from_ipc(p) for p in ipc_sm_782.data["capc"]["dimensions"]]
 
 capc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_patterns"]]
+ledsc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["ledsc"]["land_patterns"]]
 
-for (kind, lps, heights) in [("RESC", resc_lp, resc_heights), ("CAPC", capc_lp, capc_heights)]:
+work = [\
+    ("RESC", resc_lp, resc_heights), \
+    ("CAPC", capc_lp, capc_heights), \
+    ("LEDSC", ledsc_lp, ledsc_heights), \
+]
+for (kind, lps, heights) in work:
     basedir = "IPC-7351-{}.pretty".format(kind)
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
@@ -116,8 +129,8 @@ for (kind, lps, heights) in [("RESC", resc_lp, resc_heights), ("CAPC", capc_lp, 
 #        print("lp={}".format(lp))
 #        print("lp={}".format(lp.size_x / 8))
         for h in heights.get(lp.key, []):
-            key = "{}_{}x{:02}".format(kind, lp.key, h)
+            key = "{}_{}x{:03}".format(kind, lp.key, int(h * 100))
 #            print("  " + key)
-            kicad_mod = chip.render({"lp": lp, "key": key, "h": h})
+            kicad_mod = chip.render({"lp": lp, "key": key})
             with open(os.path.join(basedir, "{}.kicad_mod".format(key)), "w") as f:
                 f.write(kicad_mod)
