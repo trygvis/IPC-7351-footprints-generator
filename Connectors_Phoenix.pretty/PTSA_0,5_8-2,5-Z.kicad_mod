@@ -25,7 +25,7 @@
   (pad 7 thru_hole circle (at 15 -3.7) (size 1.524 1.524) (drill 1) (layers *.Cu *.Mask))
   (pad 8 thru_hole circle (at 17.5 1.3) (size 1.524 1.524) (drill 1) (layers *.Cu *.Mask))
   (model ${BITRAF_PRETTY}/Connectors_Phoenix.pretty/3d/1990067_02.wrl
-    (at (xyz -0.51 -0.315 -0.71))
+    (at (xyz -0.116299 -0.315 -0.71))
     (scale (xyz 0.393701 0.393701 0.393701))
     (rotate (xyz -90 0 -90))
   )
