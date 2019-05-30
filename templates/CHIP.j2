@@ -1,4 +1,6 @@
 (module {{key}} (layer F.Cu) (tedit 5A2018AF)
+  (descr "{{description}} {{lp.size_mm}} Metric, {{lp.size_in}} Imperial, square (rectangular) end terminal, IPC_7351 nominal, generated with https://github.com/trygvis/IPC-7351-footprints-generator")
+  (tags capacitor)
   (attr smd)
   (fp_text reference REF** (at 0 {{ lp.size_y / -4 }}) (layer F.Fab)
     (effects (font (size {{ rnd2(lp.size_y / 5) }} {{ lp.size_y / 5 }}) (thickness {{ lp.size_y / 5 * 0.15 }})))
@@ -28,4 +30,10 @@
 
   (pad 1 smd rect (at {{ -lp.pad_pos_x }} 0) (size {{ lp.pad_size_x }} {{ lp.pad_size_y }}) (layers F.Cu F.Paste F.Mask))
   (pad 2 smd rect (at {{  lp.pad_pos_x }} 0) (size {{ lp.pad_size_x }} {{ lp.pad_size_y }}) (layers F.Cu F.Paste F.Mask))
+
+  (model {{ model3d }}
+    (at (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )

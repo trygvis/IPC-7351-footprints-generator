@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-import os, os.path
+import os.path
 import re
+import sys
+
 import ipc_sm_782
+from jinja2 import Environment, FileSystemLoader
 
 basedir=os.path.dirname(__file__)
 
@@ -42,6 +44,10 @@ def auto_str(cls):
     return cls
 
 
+_mm_to_in = {
+    "1005": "0402",
+}
+
 @auto_str
 class ChipDimensions(object):
     def __init__(self, **kw):
@@ -68,12 +74,19 @@ class ChipLandPattern(object):
 
     @staticmethod
     def from_ipc(data):
-#        print("data={}".format(data))
+        # print("data={}".format(data))
         size_mm = data["size_mm"]
+        # try:
+        #     size_in = _mm_to_in[size_mm]
+        # except KeyError:
+        #     print("Missing mm to in mapping for {}".format(size_mm), file=sys.stderr)
+        #     sys.exit(1)
         (courtyard_x, courtyard_y) = parse_courtyard(data["grid"])
         r = lambda x: round(x)
         return ChipLandPattern(
             key = size_mm,
+            size_mm = size_mm,
+            size_in = data["size_in"],
             size_x = float(size_mm[0:2]) / 10,
             size_y = float(size_mm[2:4]) / 10,
             pad_pos_x = float(data["c"]) / 2,
@@ -150,11 +163,11 @@ capc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_pa
 ledsc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_patterns"]]
 
 work = [\
-    ("RESC", resc_lp, resc_heights), \
-    ("CAPC", capc_lp, capc_heights), \
-    ("LEDSC", ledsc_lp, ledsc_heights), \
+    ("RESC", resc_lp, resc_heights, "SMD Resistor", "${{KISYS3DMOD}}/Capacitor_SMD.3dshapes/C_{}_{}Metric.wrl"), \
+    ("CAPC", capc_lp, capc_heights, "SMD Capacitor", "${{KISYS3DMOD}}/Resistor_SMD.3dshapes/R_{}_{}Metric.wrl"), \
+    ("LEDSC", ledsc_lp, ledsc_heights, "SMD LED", "${{KISYS3DMOD}}/LED_SMD.3dshapes/LED_{}_{}Metric.wrl"), \
 ]
-for (kind, lps, heights) in work:
+for (kind, lps, heights, description, model3d_pattern) in work:
     basedir = "IPC-7351-{}.pretty".format(kind)
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
@@ -165,6 +178,14 @@ for (kind, lps, heights) in work:
         for h in heights.get(lp.key, []):
             key = "{}_{}x{:03}".format(kind, lp.key, int(h * 100))
 #            print("  " + key)
-            kicad_mod = chip.render({"lp": lp, "key": key})
+
+            model3d = model3d_pattern.format(lp.size_in, lp.size_mm)
+            env = {
+                "lp": lp,
+                "key": key,
+                "model3d": model3d,
+                "description": description,
+            }
+            kicad_mod = chip.render(env)
             with open(os.path.join(basedir, "{}.kicad_mod".format(key)), "w") as f:
                 f.write(kicad_mod)
