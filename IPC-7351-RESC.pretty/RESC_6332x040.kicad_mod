@@ -1,6 +1,6 @@
 (module RESC_6332x040 (layer F.Cu) (tedit 5A2018AF)
   (descr "SMD Resistor 6332 Metric, 2512 Imperial, square (rectangular) end terminal, IPC_7351 nominal, generated with https://github.com/trygvis/IPC-7351-footprints-generator")
-  (tags capacitor)
+  (tags resistor)
   (attr smd)
   (fp_text reference REF** (at 0 -0.8) (layer F.Fab)
     (effects (font (size 0.64 0.64) (thickness 0.096)))

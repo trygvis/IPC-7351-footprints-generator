@@ -1,6 +1,6 @@
 (module LEDSC_2012x090 (layer F.Cu) (tedit 5A2018AF)
   (descr "SMD LED 2012 Metric, 0805 Imperial, square (rectangular) end terminal, IPC_7351 nominal, generated with https://github.com/trygvis/IPC-7351-footprints-generator")
-  (tags capacitor)
+  (tags LED)
   (attr smd)
   (fp_text reference REF** (at 0 -0.3) (layer F.Fab)
     (effects (font (size 0.24 0.24) (thickness 0.036)))
