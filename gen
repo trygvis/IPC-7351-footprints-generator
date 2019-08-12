@@ -163,8 +163,8 @@ capc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_pa
 ledsc_lp = [ChipLandPattern.from_ipc(p) for p in ipc_sm_782.data["capc"]["land_patterns"]]
 
 work = [\
-    ("RESC", resc_lp, resc_heights, "SMD Resistor", "resistor", "${{KISYS3DMOD}}/Capacitor_SMD.3dshapes/C_{}_{}Metric.wrl"), \
-    ("CAPC", capc_lp, capc_heights, "SMD Capacitor", "capacitor", "${{KISYS3DMOD}}/Resistor_SMD.3dshapes/R_{}_{}Metric.wrl"), \
+    ("RESC", resc_lp, resc_heights, "SMD Resistor", "resistor", "${{KISYS3DMOD}}/Resistor_SMD.3dshapes/R_{}_{}Metric.wrl"), \
+    ("CAPC", capc_lp, capc_heights, "SMD Capacitor", "capacitor", "${{KISYS3DMOD}}/Capacitor_SMD.3dshapes/C_{}_{}Metric.wrl"), \
     ("LEDSC", ledsc_lp, ledsc_heights, "SMD LED", "LED", "${{KISYS3DMOD}}/LED_SMD.3dshapes/LED_{}_{}Metric.wrl"), \
 ]
 for (kind, lps, heights, description, tags, model3d_pattern) in work:
